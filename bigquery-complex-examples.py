@@ -237,9 +237,10 @@ def get_table(dataset, name):
     return(client.get_table(table))
 
 def generate_file(file_name):
+    row_count = 100000
     with gzip.open(file_name, 'wb') as f:
         recordtime = datetime.now() - (timedelta(seconds=1)*100000)
-        for id in xrange(0,100000):
+        for id in xrange(0,row_count):
             record = {'visit_id': id, 'payload':{}, 'visit_time':
                 recordtime.strftime("%Y-%m-%dT%H:%m:%S")}
             record['payload']['visit_location'] = \
@@ -260,6 +261,7 @@ def generate_file(file_name):
                 'value': random.randrange(1,50)}]
             recordtime = recordtime + timedelta(seconds=5)
             f.write(json.dumps(record)+"\n")
+    print("File generated, %s rows in %s." % (row_count, file_name))
 
 
 def random_name():
