@@ -31,20 +31,20 @@ yourmachine:pytexas-bigquery you$ source venv/bin/activate
 Create your BigQuery dataset, create your first table, insert some data into the table via the stream API, and then query it:
 
 ```
-(venv) yourmachine:pytexas-bigquery you$ python bigquery-simple-examples.py --create_dataset
+$ python bigquery-simple-examples.py --create_dataset
 Done, simple_dataset created.
-(venv) yourmachine:pytexas-bigquery you$ python bigquery-simple-examples.py --create_table
+$ python bigquery-simple-examples.py --create_table
 Done, simple_stream_table created.
-(venv) yourmachine:pytexas-bigquery you$ python bigquery-simple-examples.py --insert_data
+$ python bigquery-simple-examples.py --insert_data
 Inserted 6 rows.
-(venv) yourmachine:pytexas-bigquery you$ python bigquery-simple-examples.py --query_data
+$ python bigquery-simple-examples.py --query_data
 Alice	2017-04-01 12:21:32+00:00	234	3.4
 Beatrix	2017-04-01 12:25:45+00:00	564	7.2
 Edgar	2017-04-01 12:56:27+00:00	268	3.1
 Henry	2017-04-01 12:13:11+00:00	72	5.4
 Percy	2017-04-01 12:29:19+00:00	145	6.4
 Susan	2017-04-01 12:23:14+00:00	174	6.8
-(venv) yourmachine:pytexas-bigquery you$ 
+$ 
 ```
 
 The table and data will now be viewable in the [BigQuery UI](https://bigquery.cloud.google.com/dataset/).
@@ -52,9 +52,9 @@ The table and data will now be viewable in the [BigQuery UI](https://bigquery.cl
 When you're done, you can delete the table and the dataset:
 
 ```
-(venv) yourmachine:pytexas-bigquery you$ python bigquery-simple-examples.py --delete_table
+$ python bigquery-simple-examples.py --delete_table
 Done, simple_stream_table deleted.
-(venv) yourmachine:pytexas-bigquery you$ python bigquery-simple-examples.py --delete_dataset
+$ python bigquery-simple-examples.py --delete_dataset
 Done, simple_dataset deleted.
 ```
 
@@ -63,25 +63,25 @@ Done, simple_dataset deleted.
 Create your BigQuery dataset, create your first table, insert some complex data into the table via the stream API, and then query it with JSON results, row-specific results, and a UDF:
 
 ```
-(venv) yourmachine:pytexas-bigquery you$ python bigquery-complex-examples.py --create_dataset
+$ python bigquery-complex-examples.py --create_dataset
 Done, complex_dataset created.
-(venv) yourmachine:pytexas-bigquery you$ python bigquery-complex-examples.py --create_table
+$ python bigquery-complex-examples.py --create_table
 Done, complex_stream_table created.
-(venv) yourmachine:pytexas-bigquery you$ python bigquery-complex-examples.py --insert_data
+$ python bigquery-complex-examples.py --insert_data
 Inserted 3 rows.
-(venv) yourmachine:pytexas-bigquery you$ python bigquery-complex-examples.py --query_data_json
+$ python bigquery-complex-examples.py --query_data_json
 1	2017-04-01 12:21:32+00:00	NORTH	{"visit_location":"NORTH","metadata":[{"key":"first_name","value":"Alice"},{"key":"favorite_color","value":"red"},{"key":"last_purchase_id","value":"1243"},{"key":"last_purchase_total","value":"34.53"}],"metrics":[{"key":"checkout_time","value":82.4},{"key":"net_promoter","value":5},{"key":"visit_count","value":12}]}
 2	2017-04-01 12:31:51+00:00	EAST_SIDE	{"visit_location":"EAST_SIDE","metadata":[{"key":"first_name","value":"Mary"},{"key":"favorite_color","value":"red"},{"key":"last_purchase_id","value":"1243"},{"key":"last_purchase_total","value":"34.53"}],"metrics":[{"key":"checkout_time","value":23.4},{"key":"net_promoter","value":6},{"key":"visit_count","value":3}]}
 3	2017-04-01 12:28:32+00:00	EAST_SIDE	{"visit_location":"EAST_SIDE","metadata":[{"key":"first_name","value":"Bob"},{"key":"favorite_color","value":"red"},{"key":"last_purchase_id","value":"1243"},{"key":"last_purchase_total","value":"34.53"}],"metrics":[{"key":"checkout_time","value":134.4},{"key":"net_promoter","value":3},{"key":"visit_count","value":18}]}
-(venv) yourmachine:pytexas-bigquery you$ python bigquery-complex-examples.py --query_data_repeating
+$ python bigquery-complex-examples.py --query_data_repeating
 1	2017-04-01 12:21:32+00:00	NORTH	Alice	5.0
 2	2017-04-01 12:31:51+00:00	EAST_SIDE	Mary	6.0
 3	2017-04-01 12:28:32+00:00	EAST_SIDE	Bob	3.0
-(venv) yourmachine:pytexas-bigquery you$ python bigquery-complex-examples.py --query_data_udf
+$ python bigquery-complex-examples.py --query_data_udf
 1	2017-04-01 12:21:32+00:00	NORTH	Nyvpr	5.0
 2	2017-04-01 12:31:51+00:00	EAST_SIDE	Znel	6.0
 3	2017-04-01 12:28:32+00:00	EAST_SIDE	Obo	3.0
-(venv) yourmachine:pytexas-bigquery you$ 
+$ 
 ```
 
 Now you can view that complex data in the [BigQuery UI](https://bigquery.cloud.google.com/dataset/) as well.
@@ -89,11 +89,11 @@ Now you can view that complex data in the [BigQuery UI](https://bigquery.cloud.g
 Then try and load some more data by generating a random 100,000 row data file, and posting it via a load data job, overwriting the data in the table.
 
 ```
-(venv) yourmachine:pytexas-bigquery you$ python bigquery-complex-examples.py --generate_file
+$ python bigquery-complex-examples.py --generate_file
 File generated, 100000 rows in complex_dataset.json.gz.
-(venv) yourmachine:pytexas-bigquery you$ python bigquery-complex-examples.py --load_file
+$ python bigquery-complex-examples.py --load_file
 Loaded 100000 rows into complex_dataset:complex_stream_table.
-(venv) yourmachine:pytexas-bigquery you$ 
+$ 
 ```
 
 Your 100,000 rows are now viewable in the [BigQuery UI](https://bigquery.cloud.google.com/dataset/).
