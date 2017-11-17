@@ -7,6 +7,8 @@ import gzip
 import random
 import string
 import json
+import uuid
+import time
 from datetime import datetime, timedelta
 
 def validate_credentials():
@@ -223,6 +225,49 @@ FROM `%s.%s.%s` ORDER BY visit_id LIMIT 100
     for row in rows:
         print("%s\t%s\t%s\t%s\t%s" % (row[0], row[1], row[2], row[3], row[4]))
 
+def query_data_into_table(dataset_name, source_table, dest_table):
+    "Select data from a table into another table."
+    client = bigquery.Client()
+    QUERY = """
+SELECT visit_id, visit_time, payload.visit_location,
+  (SELECT value FROM UNNEST(payload.metadata) WHERE key = "first_name")
+    AS first_name,
+  (SELECT value FROM UNNEST(payload.metrics) WHERE key = "net_promoter")
+    AS net_promoter
+FROM `%s.%s.%s`
+""" % (client.project, dataset_name, source_table)
+
+    dataset = client.dataset(dataset_name)
+    job_config = bigquery.job.QueryJobConfig()
+    job_config.destination = dataset.table(dest_table)
+    job_config.write_disposition = 'WRITE_TRUNCATE'
+    query_job = bigquery.job.QueryJob(str(uuid.uuid4()),
+        QUERY, client=client, job_config=job_config)
+    query_job._begin()
+    while not query_job.done():
+        time.sleep(5)
+    print("%s bytes processed." % query_job.total_bytes_billed)
+
+def extract_table_to_bucket(dataset_name, table, bucket_name):
+    "Select data from a table into Google Cloud Storage."
+    client = bigquery.Client()
+    dataset = client.dataset(dataset_name)
+    table_ref = dataset.table(table)
+    job_config = bigquery.job.ExtractJobConfig()
+    job_config.destination_format = 'AVRO'
+    dest = ['gs://%s/complex_query_output-*.avro' % bucket_name]
+    query_job = bigquery.job.ExtractJob(str(uuid.uuid4()),
+        table_ref, dest, client, job_config=job_config)
+    # Here's an example of dumping the JSON sent to the BigQuery API
+    print(query_job._build_resource())
+    query_job._begin()
+    while not query_job.done():
+        time.sleep(5)
+    if query_job.errors:
+        print(query_job.errors)
+    print("%s file(s) created." % query_job._job_statistics().get('destinationUriFileCounts')[0])
+
+
 def get_dataset(name):
     "Quick function to get a dataset by name."
     client = bigquery.Client()
@@ -334,6 +379,12 @@ if __name__ == '__main__':
     parser.add_argument('--load_file',
         help='Create a load job for the complex_dataset.json.gz file',
         action="store_true")
+    parser.add_argument('--query_into_table',
+        help='Output Query results into different table',
+        action="store_true")
+    parser.add_argument('--extract_table_to_bucket',
+        help='Extract a table to Google Cloud Storage',
+        action="store")
     args = parser.parse_args()
 
     # Make sure our creds are valid.
@@ -365,24 +416,25 @@ if __name__ == '__main__':
         insert_data(table)
 
     elif args.query_data_json:
-        # Select some data from the table
         query_data_with_json('complex_dataset','complex_stream_table')
 
     elif args.query_data_repeating:
-        # Select some data from the table
         query_data_with_repeating_element('complex_dataset','complex_stream_table')
 
     elif args.query_data_udf:
-        # Select some data from the table
         query_data_with_udf('complex_dataset','complex_stream_table')
 
     elif args.generate_file:
-        # Select some data from the table
         generate_file('complex_dataset.json.gz')
 
     elif args.load_file:
-        # Select some data from the table
         load_data_from_file('complex_dataset','complex_stream_table','complex_dataset.json.gz')
+
+    elif args.query_into_table:
+        query_data_into_table('complex_dataset','complex_stream_table','complex_query_output')
+
+    elif args.extract_table_to_bucket:
+        extract_table_to_bucket('complex_dataset','complex_query_output',args.extract_table_to_bucket)
 
     else:
         print "Command not found, use --help for script options."
