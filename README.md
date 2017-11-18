@@ -8,7 +8,7 @@ This repo contains two script that demonstrate basic usage of the Google Cloud B
 1. Sign up for a Google Cloud account, if you don't have one already: [Google Cloud Console](https://console.cloud.google.com/)
 2. Create a [new project](https://console.cloud.google.com/cloud-resource-manager), or use an existing one
 3. [Enable billing](https://support.google.com/cloud/answer/6293499#enable-billing) for your project
-4. Create a service account from the [IAM Service Accounts](https://console.cloud.google.com/iam-admin/serviceaccounts/project) page, and download the JSON file containing the private key:
+4. Create a service account from the [IAM Service Accounts](https://console.cloud.google.com/iam-admin/serviceaccounts/project) page, add the BigQuery Editor and Storage Admin permissions, and download the JSON file containing the private key:
 
 ![IAM Service Account Screen](/images/iam_add_service_account.png?raw=true)
 
