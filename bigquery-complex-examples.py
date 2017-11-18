@@ -265,8 +265,31 @@ def extract_table_to_bucket(dataset_name, table, bucket_name):
         time.sleep(5)
     if query_job.errors:
         print(query_job.errors)
-    print("%s file(s) created." % query_job._job_statistics().get('destinationUriFileCounts')[0])
+    print("%s file(s) created." %
+        query_job._job_statistics().get('destinationUriFileCounts')[0])
 
+def load_table_from_bucket(dataset_name, table, bucket_name, blob_name):
+    client = bigquery.Client()
+    dataset_ref = client.dataset(dataset_name)
+    table_ref = dataset_ref.table(table+'$20171118')
+
+    GS_URL = 'gs://{}/{}'.format(bucket_name, blob_name)
+
+    job_config = bigquery.LoadJobConfig()
+    job_config.source_format = 'AVRO'
+    job_config._properties['timePartitioning'] = {'type': 'DAY'}
+    job_config.write_disposition = 'WRITE_TRUNCATE'
+
+    job = client.load_table_from_uri(
+        GS_URL, table_ref, job_config=job_config)
+
+    while not job.done():
+        time.sleep(5)
+
+    if job.errors:
+        print job.errors
+    else:
+        print('Loaded %s rows' % job.output_rows)
 
 def get_dataset(name):
     "Quick function to get a dataset by name."
@@ -340,7 +363,8 @@ def load_data_from_file(dataset, table, file_name):
         job = client.load_table_from_file(
             source_file, table_ref, job_config=job_config)
 
-    job.result()
+    while not job.done():
+        time.sleep(5)
 
     print('Loaded %s rows into %s:%s.' %
         (job.output_rows, dataset, table))
@@ -384,6 +408,9 @@ if __name__ == '__main__':
         action="store_true")
     parser.add_argument('--extract_table_to_bucket',
         help='Extract a table to Google Cloud Storage',
+        action="store")
+    parser.add_argument('--load_table_from_bucket',
+        help='Create a table from a Google Cloud Storage file',
         action="store")
     args = parser.parse_args()
 
@@ -435,6 +462,10 @@ if __name__ == '__main__':
 
     elif args.extract_table_to_bucket:
         extract_table_to_bucket('complex_dataset','complex_query_output',args.extract_table_to_bucket)
+
+    elif args.load_table_from_bucket:
+        blob = 'complex_query_output-000000000000.avro'
+        load_table_from_bucket('complex_dataset','load_job_table',args.load_table_from_bucket, blob)
 
     else:
         print "Command not found, use --help for script options."
