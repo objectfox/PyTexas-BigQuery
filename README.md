@@ -97,3 +97,25 @@ $
 ```
 
 Your 100,000 rows are now viewable in the [BigQuery UI](https://bigquery.cloud.google.com/dataset/).
+
+You can now query that data and send the results into another table (complex_query_output):
+
+```
+$ python bigquery-complex-examples.py --query_into_table
+18874368 bytes processed.
+```
+
+You can export that file into Google Cloud storage as AVRO, where the argument to the script is the name of your bucket. This example also shows you what the job creation JSON looks like:
+
+```
+$ python bigquery-complex-examples.py --extract_table_to_bucket pytexas-bigquery
+{'configuration': {'extract': {'destinationFormat': 'AVRO', 'destinationUris': ['gs://pytexas-bigquery/complex_query_output-*.avro'], 'sourceTable': {'projectId': u'pytexas-bigquery', 'tableId': 'complex_query_output', 'datasetId': 'complex_dataset'}}}, 'jobReference': {'projectId': u'pytexas-bigquery', 'jobId': 'df41a4cd-e6aa-4445-99df-304c1ae46a84'}}
+1 file(s) created.
+```
+
+Once you have an AVRO file in your bucket, you can import that into another table:
+
+```
+$ python bigquery-complex-examples.py --load_table_from_bucket pytexas-bigquery
+Loaded 100000 rows
+```
