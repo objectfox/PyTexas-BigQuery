@@ -109,7 +109,13 @@ You can export that file into Google Cloud storage as AVRO, where the argument t
 
 ```
 $ python bigquery-complex-examples.py --extract_table_to_bucket pytexas-bigquery
-{'configuration': {'extract': {'destinationFormat': 'AVRO', 'destinationUris': ['gs://pytexas-bigquery/complex_query_output-*.avro'], 'sourceTable': {'projectId': u'pytexas-bigquery', 'tableId': 'complex_query_output', 'datasetId': 'complex_dataset'}}}, 'jobReference': {'projectId': u'pytexas-bigquery', 'jobId': 'df41a4cd-e6aa-4445-99df-304c1ae46a84'}}
+{'configuration': {'extract': {'destinationFormat': 'AVRO',
+    'destinationUris': ['gs://pytexas-bigquery/complex_query_output-*.avro'],
+    'sourceTable': {'datasetId': 'complex_dataset',
+    'projectId': u'pytexas-bigquery',
+    'tableId': 'complex_query_output'}}},
+ 'jobReference': {'jobId': 'df41a4cd-e6aa-4445-99df-304c1ae46a84',
+    'projectId': u'pytexas-bigquery'}}
 1 file(s) created.
 ```
 
