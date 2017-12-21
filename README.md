@@ -1,6 +1,8 @@
 # PyTexas-BigQuery
 BigQuery with Python Presentation for PyTexas 2017
 
+[Video available on YouTube](https://www.youtube.com/watch?v=1csQTGBN38M)
+
 This repo contains two script that demonstrate basic usage of the Google Cloud BigQuery service.
 
 ## Account Setup
